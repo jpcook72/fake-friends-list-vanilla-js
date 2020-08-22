@@ -63,16 +63,66 @@ const init = async()=> {
 
 init();*/
 
+const FriendList = (props) => {
+  const friendArr = props.friends.map( friend =>       
+  <li data-id={friend.id} key={friend.id}>
+    <h2>{ friend.name }</h2>
+      <span>{ friend.rating }</span>
+    <button data-id={friend.id} onClick={props.buttonClicks}>+</button>
+    <button data-id={friend.id} onClick={props.buttonClicks}>-</button>
+    <button data-id={friend.id} onClick={props.buttonClicks}>x</button>
+  </li>
+)
+  return friendArr;
+}
+
 class Friends extends React.Component{
   constructor(){
-  super()
-  this.state={
-    friends:[],
+    super()
+    this.state={
+      friends:[],
+    }
+    this.buttonClicks = this.buttonClicks.bind(this);
   }
+  async buttonClicks(ev) {
+    console.log(ev);
+    if(ev.target.innerHTML === 'x'){
+      const id = ev.target.getAttribute('data-id')*1;
+      await axios.delete(`/api/friends/${id}`); 
+      friends = this.state.friends.filter(friend => friend.id !== id);
+    }
+    else {
+      const id = ev.target.getAttribute('data-id')*1;
+      const friend = this.state.friends.find(item => item.id === id);
+      const increase = ev.target.innerHTML === '+';
+      friend.rating = increase ? ++friend.rating : --friend.rating;
+      await axios.put(`/api/friends/${friend.id}`, { rating: friend.rating });
+    }
+  }
+  async componentDidMount() {
+    try {
+      const response = await axios.get('/api/friends');
+      let friends = response.data;
+      console.log('in component did mount', friends);
+      await this.setState({ friends: friends })
+    }
+    catch(err) {
+      console.log('did not mount');
+    }
   }
   render(){
-    return( <div><h1>Friends</h1></div>)
-  }
+  return(     
+    <div>
+      <h1>Friends (The List)</h1>
+      <form>
+        <button>Create</button>
+      </form>
+      <div id='error'></div>
+      <ul>
+        <FriendList friends={this.state.friends} buttonClicks={ this.buttonClicks }/>
+      </ul>
+    </div>
+  )}
 
   }
 ReactDOM.render(
