@@ -1,6 +1,10 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 const axios = require('axios');
 
-const render = (friends)=> {
+
+
+/*const render = (friends)=> {
   const ul = document.querySelector('ul');
   const error = document.querySelector('#error');
   error.innerText = '';
@@ -53,8 +57,25 @@ const init = async()=> {
     }
     catch(ex){
       error.innerText = ex.response.data.error;
-    }
+    }s
   });
 };
 
-init();
+init();*/
+
+class Friends extends React.Component{
+  constructor(){
+  super()
+  this.state={
+    friends:[],
+  }
+  }
+  render(){
+    return( <div><h1>Friends</h1></div>)
+  }
+
+  }
+ReactDOM.render(
+  <Friends />,
+  document.getElementById('app')
+);
